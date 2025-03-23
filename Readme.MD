@@ -3,11 +3,11 @@
 
 ## Ingeniería en Tecnologías de la Información y Comunicaciones
 
-## Asignatura: Taller Avanzado de Desarrollo de Software 
+### Asignatura: Taller Avanzado de Desarrollo de Software 
 
-## Clase 18 - webApi (apiRESTCheckUsuario)
+### Clase 18 - webApi (apiRESTCheckUsuario)
 
-## Docente: M.T.I Luis Alejandro Santana Valadez 
+### Docente: M.T.I Luis Alejandro Santana Valadez 
 
 ### Alumno: Ramírez Pérez Jocelyn
 
