@@ -23,5 +23,6 @@ namespace apiRESTCheckUsuario.Models
         public int ban { get; set; }
         // Objeto Json para envío de datos
         public JObject datos { get; set; }
+      
     }
 }

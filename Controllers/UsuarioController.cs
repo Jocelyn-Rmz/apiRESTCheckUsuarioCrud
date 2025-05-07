@@ -127,7 +127,7 @@ namespace apiRESTCheckUsuario.Controllers
         // Endpoint para validación de acceso vwRptUsuario
         [HttpGet]
         [Route("check/usuario/vwrptusuario")]
-        public clsApiStatus vwRptUsuario([FromUri]string filtro)
+        public clsApiStatus vwRptUsuario([FromUri] string filtro)
         {
             clsApiStatus objRespuesta = new clsApiStatus();
             JObject jsonResp = new JObject();
@@ -154,6 +154,25 @@ namespace apiRESTCheckUsuario.Controllers
                 objRespuesta.datos = jsonResp;
             }
             return objRespuesta;
+        }
+
+        [HttpGet]
+        [Route("check/usuario/vwrptusuario")]
+        public IHttpActionResult GetUsuarios(string filtro = "")
+        {
+            clsUsuario objUsuario = new clsUsuario();
+            var ds = objUsuario.vwRptUsuario(filtro);
+
+            var datos = ds.Tables[0];
+
+            return Ok(new
+            {
+                estatus = "ok",
+                datos = new Dictionary<string, object>
+        {
+            { "vwRptUsuario", datos }
+   }
+            });
         }
 
         // endpoint para validación de acceso vwTipoUsuario
@@ -193,6 +212,148 @@ namespace apiRESTCheckUsuario.Controllers
             }
             return objRespuesta;
         }
+
+
+
+        //Busca Por clave´para saber si el usuario se encuentra
+        [HttpGet]
+        [Route("check/usuario/spbuscarusuarioclave")]
+        public clsApiStatus GetUsuarioPorClave([FromUri] string clave)
+        {
+            clsApiStatus objRespuesta = new clsApiStatus();
+            JObject jsonResp = new JObject();
+
+            try
+            {
+                clsUsuario objUsuario = new clsUsuario();
+                objUsuario.cve = clave;
+
+                var ds = objUsuario.spBuscarUsuarioPorClave();
+
+                if (ds.Tables[0].Rows.Count > 0 && ds.Tables[0].Columns.Contains("UsuarioNoEncontrado") == false)
+                {
+                    objRespuesta.statusExec = true;
+                    objRespuesta.ban = 1;
+                    objRespuesta.msg = "Usuario encontrado";
+
+                    string json = JsonConvert.SerializeObject(ds.Tables[0], Formatting.Indented);
+                    jsonResp = JObject.Parse($"{{\"usuario\": {json}}}");
+                    objRespuesta.datos = jsonResp;
+                }
+                else
+                {
+                    objRespuesta.statusExec = true;
+                    objRespuesta.ban = 0;
+                    objRespuesta.msg = "Usuario no encontrado";
+                }
+            }
+            catch (Exception ex)
+            {
+                objRespuesta.statusExec = false;
+                objRespuesta.ban = -1;
+                objRespuesta.msg = ex.Message;
+            }
+
+            return objRespuesta;
+        }
+
+
+        //Endpoint para modificar usuarios 
+        [HttpPut]
+        [Route("check/usuario/spupdusuario")]
+        public clsApiStatus spUpdUsuario([FromBody] clsUsuario modelo)
+        {
+            clsApiStatus objRespuesta = new clsApiStatus();
+            JObject jsonResp = new JObject();
+
+            try
+            {
+                clsUsuario objUsuario = new clsUsuario();
+                objUsuario.cve = modelo.cve;
+                objUsuario.nombre = modelo.nombre;
+                objUsuario.apellidoPaterno = modelo.apellidoPaterno;
+                objUsuario.apellidoMaterno = modelo.apellidoMaterno;
+                objUsuario.usuario = modelo.usuario;
+                objUsuario.contrasena = modelo.contrasena;
+                objUsuario.ruta = modelo.ruta;
+                objUsuario.tipo = modelo.tipo;
+
+                var ds = objUsuario.spUpdUsuario();
+                string resultado = ds.Tables[0].Rows[0][0].ToString();
+
+                objRespuesta.statusExec = true;
+                objRespuesta.ban = int.Parse(resultado);
+
+                switch (resultado)
+                {
+                    case "0":
+                        objRespuesta.msg = "Usuario modificado correctamente";
+                        break;
+                    case "1":
+                        objRespuesta.msg = "La clave del usuario no existe";
+                        break;
+                    case "2":
+                        objRespuesta.msg = "Ya existe un usuario con ese nombre completo";
+                        break;
+                    case "3":
+                        objRespuesta.msg = "Ya existe un nombre de usuario igual";
+                        break;
+                    case "4":
+                        objRespuesta.msg = "El tipo de usuario no existe";
+                        break;
+                    default:
+                        objRespuesta.msg = "Error desconocido";
+                        break;
+                }
+
+                jsonResp.Add("msgData", objRespuesta.msg);
+                objRespuesta.datos = jsonResp;
+            }
+            catch (Exception ex)
+            {
+                objRespuesta.statusExec = false;
+                objRespuesta.ban = -1;
+                objRespuesta.msg = "Error al actualizar usuario";
+                jsonResp.Add("msgData", ex.Message.ToString());
+                objRespuesta.datos = jsonResp;
+            }
+
+            return objRespuesta;
+        }
+
+        //ELIMINAR USUARIOS
+        [HttpDelete]
+        [Route("check/usuario/spdelusuario")]
+        public clsApiStatus spDelUsuario([FromUri] string clave)
+        {
+            clsApiStatus objRespuesta = new clsApiStatus();
+            JObject jsonResp = new JObject();
+            DataSet ds = new DataSet();
+
+            try
+            {
+                clsUsuario objUsuario = new clsUsuario();
+                objUsuario.cve = clave;
+
+                ds = objUsuario.spDelUsuario();
+                objRespuesta.statusExec = true;
+                objRespuesta.ban = 1; // asumimos éxito si llega hasta aquí
+                objRespuesta.msg = ds.Tables[0].Rows[0]["mensaje"].ToString();
+                jsonResp.Add("msgData", ds.Tables[0].Rows[0]["mensaje"].ToString());
+                objRespuesta.datos = jsonResp;
+            }
+            catch (Exception ex)
+            {
+                objRespuesta.statusExec = false;
+                objRespuesta.ban = -1;
+                objRespuesta.msg = "Error al eliminar usuario";
+                jsonResp.Add("msgData", ex.Message.ToString());
+                objRespuesta.datos = jsonResp;
+            }
+
+            return objRespuesta;
+        }
+
 
 
 

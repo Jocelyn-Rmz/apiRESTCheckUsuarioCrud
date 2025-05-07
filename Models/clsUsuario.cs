@@ -40,12 +40,12 @@ namespace apiRESTCheckUsuario.Models
             this.usuario = usuario;
             this.contrasena = contrasena;
         }
-        public clsUsuario(string nombre, 
+        public clsUsuario(string nombre,
             string apellidoPaterno,
             string apellidoMaterno,
             string usuario,
-            string contrasena, 
-            string ruta, 
+            string contrasena,
+            string ruta,
             string tipo)
         {
             this.nombre = nombre;
@@ -61,18 +61,18 @@ namespace apiRESTCheckUsuario.Models
         public DataSet spInsUsuario()
         {
 
-            string cadSql = "CALL spInsUsuario('"+ this.nombre +
+            string cadSql = "CALL spInsUsuario('" + this.nombre +
                                             "', '" + this.apellidoPaterno +
                                             "', '" + this.apellidoMaterno +
                                             "', '" + this.usuario +
                                             "', '" + this.contrasena +
-                                            "', '" + this.ruta + 
-                                            "',"   + this.tipo+ ")";
+                                            "', '" + this.ruta +
+                                            "'," + this.tipo + ")";
 
             // Configuración de los objetos de conexion a datos 
 
             MySqlConnection cnn = new MySqlConnection(cadConn);
-            MySqlDataAdapter da = new MySqlDataAdapter(cadSql,cnn);
+            MySqlDataAdapter da = new MySqlDataAdapter(cadSql, cnn);
             DataSet ds = new DataSet();
 
             //Ejecucion del adaptador de dtaos (reto9rna un DataSet)
@@ -101,12 +101,18 @@ namespace apiRESTCheckUsuario.Models
 
 
 
-        public DataSet vwRptUsuario(string filtro)
+        public DataSet vwRptUsuario(string filtro = "", string tipoUsuario = "")
         {
-            string cadSQL = "SELECT * FROM vwRptUsuario";
+            string cadSQL = "SELECT Clave, Nombre, Usuario, Foto, SUBSTRING_INDEX(Rol, '-', -1) AS Rol FROM vwRptUsuario WHERE 1=1";
+
             if (!string.IsNullOrEmpty(filtro))
             {
-                cadSQL += " WHERE nombre LIKE '%" + filtro + "%'";  // Asegúrate de usar el nombre correcto de la columna en la base de datos
+                cadSQL += " AND (Nombre LIKE '%" + filtro + "%' OR Usuario LIKE '%" + filtro + "%')";
+            }
+
+            if (!string.IsNullOrEmpty(tipoUsuario))
+            {
+                cadSQL += " AND Clave = '" + tipoUsuario + "'";
             }
 
             MySqlConnection cnn = new MySqlConnection(cadConn);
@@ -115,6 +121,7 @@ namespace apiRESTCheckUsuario.Models
             da.Fill(ds, "vwRptUsuario");
             return ds;
         }
+
 
 
 
@@ -134,6 +141,55 @@ namespace apiRESTCheckUsuario.Models
             return ds;
         }
 
-    }
+
+        //Busca al usuario por nombre
+        public DataSet spBuscarUsuarioPorClave()
+        {
+            string cadSQL = $"CALL spBuscarUsuarioPorClave({this.cve})";
+
+            MySqlConnection cnn = new MySqlConnection(cadConn);
+            MySqlDataAdapter da = new MySqlDataAdapter(cadSQL, cnn);
+            DataSet ds = new DataSet();
+            da.Fill(ds, "spBuscarUsuarioPorClave");
+            return ds;
+        }
+
+        //Modificara los datos del usuario 
+        public DataSet spUpdUsuario()
+        {
+            string cadSQL = $"CALL spUpdUsuario({this.cve}, " +
+                            $"'{this.nombre}', " +
+                            $"'{this.apellidoPaterno}', " +
+                            $"'{this.apellidoMaterno}', " +
+                            $"'{this.usuario}', " +
+                            $"'{this.contrasena}', " +
+                            $"'{this.ruta}', " +
+                            $"{this.tipo})";
+
+            MySqlConnection cnn = new MySqlConnection(cadConn);
+            MySqlDataAdapter da = new MySqlDataAdapter(cadSQL, cnn);
+            DataSet ds = new DataSet();
+            da.Fill(ds, "spUpdUsuario");
+            return ds;
+        }
+
+        //Eliminar Usuarios
+        public DataSet spDelUsuario()
+        {
+            string cadSQL = $"CALL spDelUsuario({this.cve})";
+
+            MySqlConnection cnn = new MySqlConnection(cadConn);
+            MySqlDataAdapter da = new MySqlDataAdapter(cadSQL, cnn);
+            DataSet ds = new DataSet();
+            da.Fill(ds, "spDelUsuario");
+
+            return ds;
+        }
+
+
+
+
 
     }
+
+}

@@ -53,7 +53,6 @@ C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\roslyn
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\Antlr3.Runtime.dll
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\Microsoft.Web.Infrastructure.dll
-C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\MySql.Data.dll
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\Newtonsoft.Json.dll
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\System.Net.Http.Formatting.dll
 C:\Users\Jocelyn\source\repos\apiRESTCheckUsuario\apiRESTCheckUsuario\bin\System.Web.Helpers.dll
